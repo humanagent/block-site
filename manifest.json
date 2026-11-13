@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Block Site",
+  "version": "1.1.0",
+  "description": "Bloqueá sitios y controlá tus feeds (ocultar o limitar posts por día) en un solo lugar.",
+  "permissions": ["declarativeNetRequest", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+    "content_scripts": [
+    {
+      "matches": [
+        "*://*.x.com/*",
+        "*://*.twitter.com/*",
+        "*://*.linkedin.com/*",
+        "*://*.youtube.com/*",
+        "*://*.instagram.com/*",
+        "*://*.reddit.com/*",
+        "*://*.facebook.com/*"
+      ],
+      "js": ["sites.js", "config.js", "content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["blocked.html"], "matches": ["<all_urls>"] }
+  ]
+}

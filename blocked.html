@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sitio bloqueado</title>
+  <style>
+    body { font: 16px -apple-system, system-ui, sans-serif; display: grid; place-items: center; height: 100vh; margin: 0; background: #111; color: #eee; text-align: center; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    p { color: #999; }
+    code { color: #ff6b6b; }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>🚫 Sitio bloqueado</h1>
+    <p><code id="site"></code> está en tu lista de bloqueo.</p>
+    <p>Volvé a lo importante.</p>
+  </div>
+  <script>
+    document.getElementById("site").textContent = new URLSearchParams(location.search).get("site") || "Este sitio";
+  </script>
+</body>
+</html>
