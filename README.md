@@ -5,7 +5,7 @@ myself. It blocks the sites I shouldn't open and puts a daily budget on my socia
 feeds, so "just checking LinkedIn" stays at five minutes instead of forty.
 
 It replaces three extensions I had installed (a site blocker plus one feed blocker
-per network) with about 200 lines of plain JavaScript. No popup, no account, no
+per network) with about 200 lines of plain JavaScript. No account, no
 tracking, no build step. The whole configuration is one file, `config.js`.
 
 ## My setup
@@ -53,6 +53,7 @@ var CONFIG = {
   enabled: true,
 
   // Blocked completely (domain, without www). Subdomains are included.
+  // An entry with a path blocks only that path: "github.com/owner/repo/pulls".
   blockedSites: ["example.com"],
 
   // Per-site feed rules
@@ -82,7 +83,11 @@ resets the next day.
 - **`time`** counts only while the tab is visible and focused. It counts time on
   the whole site, not only the feed, and all tabs share the same clock.
 
-Set `enabled: false` to switch everything off without uninstalling.
+**Pause:** click the extension's toolbar icon and pick **Pausar 15 min** or
+**Pausar 1 h** to switch everything off (blocked sites and feed rules) for that
+long. It turns itself back on when the time is up, or press **Reanudar ahora**.
+While paused, the icon shows an `OFF` badge and open tabs update instantly.
+`enabled: false` in `config.js` switches it off permanently.
 
 ## How it works
 
@@ -94,6 +99,7 @@ Set `enabled: false` to switch everything off without uninstalling.
 | `content.js`    | Hides the feed, counts posts and time, shows the notice and counter.    |
 | `background.js` | Turns `blockedSites` into `declarativeNetRequest` redirect rules.       |
 | `blocked.html`  | The page shown for a blocked site.                                      |
+| `popup.html/js` | The toolbar panel: timed pause.                                         |
 
 Daily usage (posts seen and seconds spent) is stored in `chrome.storage.local`
 and never leaves your browser.

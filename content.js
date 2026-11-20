@@ -3,12 +3,12 @@
   const site = SITES.find((s) => s.hosts.some((h) => host === h || host.endsWith("." + h)));
   if (!site) return;
 
-  const enabled = CONFIG.enabled !== false;
+  let enabled = CONFIG.enabled !== false; // también se apaga desde el ícono (storage "off")
   const cfg = { mode: "off", limit: 20, ...(CONFIG.feeds[site.id] || {}) };
   let seen = new Set(); // posts contados hoy
   let secs = 0; // segundos activos hoy en el sitio (modo "time")
 
-  const today = () => new Date().toISOString().slice(0, 10);
+  const today = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD en hora local
 
   // ── CSS: oculta el feed cuando <html> tiene la clase bs-hidden ──
   const style = document.createElement("style");
@@ -134,6 +134,8 @@
 
   // ── Arranque y reactividad (SPA, cambios desde el popup) ──
   async function init() {
+    const { off } = await chrome.storage.local.get("off");
+    enabled = CONFIG.enabled !== false && !off;
     await loadUsage();
     update();
     startTimer();
@@ -150,7 +152,12 @@
 
   // Solo si otra pestaña cambió el uso (ignora los cambios propios)
   chrome.storage.onChanged.addListener(async (changes, area) => {
-    if (area !== "local" || !changes.usage) return;
+    if (area !== "local") return;
+    if (changes.off) {
+      enabled = CONFIG.enabled !== false && !changes.off.newValue;
+      update();
+    }
+    if (!changes.usage) return;
     const day = changes.usage.newValue?.day;
     const other = changes.usage.newValue?.seen?.[site.id] || [];
     const otherSecs = changes.usage.newValue?.time?.[site.id] || 0;

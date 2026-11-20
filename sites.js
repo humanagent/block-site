@@ -10,12 +10,15 @@ var SITES = [
     hosts: ["x.com", "twitter.com"],
     isFeed: (p) => p === "/home" || p === "/",
     feed: [
+      '[id^="urt:home"]', // UI nueva (div#urt:home:for-you / following)
       '[aria-label="Timeline: Your Home Timeline"]',
       '[data-testid="primaryColumn"] div[aria-label="Timeline"]',
       '[role="region"][aria-label*="Timeline"]',
     ],
-    item: 'article[data-testid="tweet"]',
-    key: (el) => el.querySelector('a[href*="/status/"]')?.getAttribute("href"),
+    item: 'article[data-testid="tweet"], [id^="urt:home"] article',
+    key: (el) =>
+      el.closest('[data-href*="/status/"]')?.getAttribute("data-href") ||
+      el.querySelector('a[href*="/status/"]')?.getAttribute("href"),
   },
   {
     id: "linkedin",
@@ -24,11 +27,13 @@ var SITES = [
     isFeed: (p) => p === "/" || p.startsWith("/feed"),
     feed: [
       '[data-testid="mainFeed"]', // UI nueva (/feed/foryou/)
+      '[data-testid="NetworkFeedListCollection"]', // pestaña Network (/feed/network/)
+      '[data-sdui-screen*=".feed."] > [role="list"]', // cualquier otra pestaña del feed
       '[aria-label^="Main Feed"]',
       ".scaffold-finite-scroll",
       '[role="feed"]',
     ],
-    item: "[data-testid='mainFeed'] [role='listitem'], [data-urn], [data-id^='urn:li:activity'], .feed-shared-update-v2",
+    item: "[data-testid='mainFeed'] [role='listitem'], [data-testid='NetworkFeedListCollection'] [role='listitem'], [data-urn], [data-id^='urn:li:activity'], .feed-shared-update-v2",
     key: (el) => el.getAttribute("data-urn") || el.getAttribute("data-id"),
   },
   {
